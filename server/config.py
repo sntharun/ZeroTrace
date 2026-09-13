@@ -4,7 +4,7 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
     TOGETHER_API_KEY: str = ""
     VLM_PROVIDER: str = "groq"
-    VLM_MODEL: str = "meta-llama/llama-4-scout-17b-16e-instruct"
+    VLM_MODEL: str = "qwen/qwen3.8-27b"
     SERVER_HOST: str = "0.0.0.0"
     SERVER_PORT: int = 8000
     LOG_LEVEL: str = "INFO"

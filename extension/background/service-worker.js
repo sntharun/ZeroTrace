@@ -192,5 +192,11 @@ async function handleSendToServer(task) {
     }
   }
 
-  return { success: true, reasoning: data.reasoning, status: data.status, actionsCount: data.actions?.length || 0 };
+  return {
+    success: true,
+    reasoning: data.reasoning,
+    message: data.message,
+    status: data.status,
+    actionsCount: data.actions?.length || 0
+  };
 }

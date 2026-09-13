@@ -95,11 +95,14 @@ btnSend.addEventListener('click', async () => {
     }
     if (response?.success) {
       addLog('Server response received.');
+      if (response.message) {
+        addLog(`💡 Answer: ${response.message}`);
+      }
       if (response.reasoning) {
-        addLog(`Reasoning: ${response.reasoning}`);
+        addLog(`📋 Details: ${response.reasoning}`);
       }
       if (response.actionsCount > 0) {
-        addLog(`Executing ${response.actionsCount} automated action(s)...`);
+        addLog(`⚡ Executing ${response.actionsCount} automated action(s)...`);
       }
     } else {
       addLog('Failed: ' + (response?.error || 'Unknown error'));

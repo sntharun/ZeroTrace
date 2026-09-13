@@ -1,9 +1,31 @@
 import asyncio
+import base64
+import io
 import time
+from PIL import Image
 from loguru import logger
 from groq import AsyncGroq
 from openai import AsyncOpenAI
 from config import settings
+
+def optimize_image_for_vlm(image_b64: str, max_size: int = 800) -> str:
+    """Downscales high-resolution screenshots and compresses JPEG to prevent token limit exhaustion."""
+    try:
+        img_bytes = base64.b64decode(image_b64)
+        img = Image.open(io.BytesIO(img_bytes))
+        
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+            
+        if max(img.size) > max_size:
+            img.thumbnail((max_size, max_size), Image.Resampling.LANCZOS)
+            
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", quality=80, optimize=True)
+        return base64.b64encode(buf.getvalue()).decode("utf-8")
+    except Exception as e:
+        logger.warning(f"[PrivacyLens Server] Image optimization failed: {e}")
+        return image_b64
 
 class VLMService:
     def __init__(self):
@@ -29,6 +51,9 @@ class VLMService:
             logger.info("[PrivacyLens Server] No active API key found in .env — using intelligent local agent simulation for demo.")
             return self._generate_demo_response(user_message)
 
+        # Optimize image resolution and payload size to stay well under rate limits
+        processed_image_b64 = optimize_image_for_vlm(image_b64, max_size=768)
+
         retries = 2
         for attempt in range(retries):
             try:
@@ -46,7 +71,7 @@ class VLMService:
                             {
                                 "type": "image_url",
                                 "image_url": {
-                                    "url": f"data:image/jpeg;base64,{image_b64}"
+                                    "url": f"data:image/jpeg;base64,{processed_image_b64}"
                                 }
                             }
                         ]
