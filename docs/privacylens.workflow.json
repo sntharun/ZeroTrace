@@ -1,0 +1,78 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "PrivacyLens Agent Pipeline",
+    "output": "docs/privacylens-workflow.html",
+    "quality_profile": "showcase",
+    "animation": "trace",
+    "views": [
+      {
+        "id": "client-flow",
+        "label": "Client pipeline",
+        "focus": ["user-task", "capture", "detect-pii", "redact", "transmit"],
+        "note": "Follow the on-device capture, PII detection, and redaction path."
+      },
+      {
+        "id": "server-flow",
+        "label": "Server reasoning",
+        "focus": ["transmit", "vlm-reason", "plan-actions", "execute"],
+        "note": "See how the server interprets sanitized context and plans actions."
+      }
+    ]
+  },
+  "lanes": [
+    { "id": "client", "label": "Browser Extension" },
+    { "id": "privacy", "label": "Privacy Engine", "variant": "exception" },
+    { "id": "server", "label": "Server (FastAPI + VLM)" }
+  ],
+  "phases": [
+    { "id": "init", "label": "Initiate", "fromCol": 0, "toCol": 0 },
+    { "id": "perceive", "label": "Perceive", "fromCol": 1, "toCol": 1, "variant": "emphasis" },
+    { "id": "protect", "label": "Protect", "fromCol": 2, "toCol": 3 },
+    { "id": "reason", "label": "Reason + Act", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [
+    { "id": "on-device", "label": "On-device processing", "lane": "privacy", "fromCol": 1, "toCol": 3, "variant": "security" }
+  ],
+  "mainPath": ["user-task", "capture", "detect-pii", "redact", "transmit", "vlm-reason", "plan-actions", "execute"],
+  "nodes": [
+    { "id": "user-task", "lane": "client", "col": 0, "type": "external", "label": "User Task", "sublabel": "natural language", "width": 132 },
+    { "id": "capture", "lane": "client", "col": 1, "type": "frontend", "label": "Screen Capture", "sublabel": "screenshot + DOM", "width": 132 },
+    { "id": "detect-pii", "lane": "privacy", "col": 2, "type": "security", "label": "PII Detection", "sublabel": "DOM + regex + vision", "tag": "3-layer", "width": 132 },
+    { "id": "redact", "lane": "privacy", "col": 3, "type": "security", "label": "Redact + Sanitize", "sublabel": "blur, mask, replace", "width": 132 },
+    { "id": "transmit", "lane": "client", "col": 4, "type": "cloud", "label": "HTTPS POST", "sublabel": "sanitized payload", "tag": "privacy wall", "width": 132 },
+    { "id": "vlm-reason", "lane": "server", "col": 4, "type": "cloud", "label": "VLM Inference", "sublabel": "Groq / Together AI", "tag": "Qwen2.5-VL", "width": 132 },
+    { "id": "plan-actions", "lane": "server", "col": 5, "type": "backend", "label": "Action Planner", "sublabel": "JSON extraction", "width": 132 },
+    { "id": "execute", "lane": "client", "col": 5, "type": "frontend", "label": "Execute Actions", "sublabel": "click / type / scroll", "width": 132 }
+  ],
+  "edges": [
+    { "id": "e1", "from": "user-task", "to": "capture", "label": "activate extension", "variant": "emphasis" },
+    { "id": "e2", "from": "capture", "to": "detect-pii", "label": "raw pixels + DOM", "variant": "emphasis" },
+    { "id": "e3", "from": "detect-pii", "to": "redact", "label": "PII bounding boxes", "variant": "security" },
+    { "id": "e4", "from": "redact", "to": "transmit", "label": "no raw PII", "variant": "emphasis" },
+    { "id": "e5", "from": "transmit", "to": "vlm-reason", "label": "sanitized context", "variant": "emphasis" },
+    { "id": "e6", "from": "vlm-reason", "to": "plan-actions", "label": "reasoning output", "variant": "default" },
+    { "id": "e7", "from": "plan-actions", "to": "execute", "label": "structured actions", "variant": "emphasis", "role": "return" }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Privacy Guarantee",
+      "items": [
+        "Raw screenshots and PII never leave the browser",
+        "Three detection layers: DOM heuristics, regex, BlazeFace",
+        "The HTTPS POST marks the exact privacy boundary"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Latency Budget",
+      "items": [
+        "Client pipeline under 500ms total",
+        "VLM inference via Groq under 1.5 seconds",
+        "Full round-trip targets under 3 seconds"
+      ]
+    }
+  ]
+}

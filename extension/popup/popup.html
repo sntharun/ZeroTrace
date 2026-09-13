@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PrivacyLens Agent</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🛡️</div>
+    <h1>PrivacyLens Agent</h1>
+  </div>
+  
+  <div class="status-panel">
+    <div id="status-indicator" class="indicator disconnected"></div>
+    <span id="status-text">Disconnected</span>
+  </div>
+
+  <div class="controls">
+    <textarea id="task-input" placeholder="E.g., Help me fill this form..."></textarea>
+    
+    <div class="actions">
+      <button id="btn-analyze" class="btn primary">Analyze Page</button>
+      <button id="btn-send" class="btn secondary">Send to Server</button>
+    </div>
+    
+    <div class="toggle-container">
+      <label class="toggle-label">
+        <input type="checkbox" id="toggle-redact" checked>
+        <span class="slider"></span>
+        Auto-redact PII
+      </label>
+    </div>
+  </div>
+
+  <div class="logs">
+    <h3>Activity Log</h3>
+    <ul id="log-list"></ul>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

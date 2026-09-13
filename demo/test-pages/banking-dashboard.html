@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page — Banking Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: #f5f6fa; 
+            color: #2d3436;
+        }
+        .navbar {
+            background: #2d3436;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar .logo { font-size: 1.3rem; font-weight: 700; }
+        .navbar .logo span { color: #00b894; }
+        .navbar .user-info { display: flex; align-items: center; gap: 0.75rem; }
+        .navbar .avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            object-fit: cover; border: 2px solid #00b894;
+        }
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .stat-card .label { font-size: 0.85rem; color: #636e72; margin-bottom: 0.5rem; }
+        .stat-card .value { font-size: 1.6rem; font-weight: 700; }
+        .stat-card .change { font-size: 0.8rem; margin-top: 0.3rem; }
+        .stat-card .change.positive { color: #00b894; }
+        .stat-card .change.negative { color: #d63031; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+        .card h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #2d3436; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+        th { color: #636e72; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .amount { font-weight: 600; font-family: 'SF Mono', monospace; }
+        .amount.debit { color: #d63031; }
+        .amount.credit { color: #00b894; }
+        .tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .tag.completed { background: #e8f8f5; color: #00b894; }
+        .tag.pending { background: #fef9e7; color: #f39c12; }
+        .tag.failed { background: #fde8e8; color: #d63031; }
+        .sidebar-info { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        .info-item { margin-bottom: 0.75rem; }
+        .info-item .lbl { font-size: 0.8rem; color: #636e72; margin-bottom: 0.2rem; }
+        .info-item .val { font-size: 0.95rem; font-weight: 600; }
+        .transfer-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: #444; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #00b894;
+            color: white;
+        }
+        .btn:hover { background: #00a381; }
+        .masked { letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Secure<span>Bank</span> Dashboard</div>
+        <div class="user-info">
+            <span>Welcome, Priya Patel</span>
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User Avatar" class="avatar">
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Account Summary Cards -->
+        <div class="grid">
+            <div class="stat-card">
+                <div class="label">Savings Account</div>
+                <div class="value">₹4,52,890.75</div>
+                <div class="change positive">↑ ₹12,450 this month</div>
+                <div style="font-size: 0.8rem; color: #636e72; margin-top: 0.3rem;">A/C: 9876 5432 1098 7654</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Credit Card</div>
+                <div class="value">₹28,340.00</div>
+                <div class="change negative">Outstanding balance</div>
+                <div style="font-size: 0.8rem; color: #636e72; margin-top: 0.3rem;">Card: 4532 •••• •••• 3456</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Fixed Deposit</div>
+                <div class="value">₹10,00,000.00</div>
+                <div class="change positive">7.5% p.a. interest</div>
+                <div style="font-size: 0.8rem; color: #636e72; margin-top: 0.3rem;">Maturity: 15 Mar 2027</div>
+            </div>
+        </div>
+
+        <!-- Account Details -->
+        <div class="sidebar-info">
+            <div class="card">
+                <h2>👤 Account Holder Details</h2>
+                <div class="info-item">
+                    <div class="lbl">Account Holder</div>
+                    <div class="val">Priya Patel</div>
+                </div>
+                <div class="info-item">
+                    <div class="lbl">Customer ID</div>
+                    <div class="val">CID-84729301</div>
+                </div>
+                <div class="info-item">
+                    <div class="lbl">PAN</div>
+                    <div class="val">BQPPP4321K</div>
+                </div>
+                <div class="info-item">
+                    <div class="lbl">Aadhaar (Linked)</div>
+                    <div class="val">8765 4321 0987</div>
+                </div>
+                <div class="info-item">
+                    <div class="lbl">Mobile</div>
+                    <div class="val">+91 87654 32109</div>
+                </div>
+                <div class="info-item">
+                    <div class="lbl">Email</div>
+                    <div class="val">priya.patel@outlook.com</div>
+                </div>
+                <div class="info-item">
+                    <div class="lbl">Branch</div>
+                    <div class="val">Andheri West, Mumbai</div>
+                </div>
+                <div class="info-item">
+                    <div class="lbl">IFSC</div>
+                    <div class="val">SBIN0005678</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>💸 Quick Transfer</h2>
+                <div class="transfer-form">
+                    <div class="form-group">
+                        <label>From Account</label>
+                        <select name="from_account">
+                            <option>Savings - 9876 5432 1098 7654</option>
+                            <option>Current - 1122 3344 5566 7788</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Beneficiary Account</label>
+                        <input type="text" name="beneficiary_account" placeholder="Enter account number" value="4455 6677 8899 0011">
+                    </div>
+                    <div class="form-group">
+                        <label>Beneficiary Name</label>
+                        <input type="text" name="beneficiary_name" value="Amit Kumar">
+                    </div>
+                    <div class="form-group">
+                        <label>IFSC Code</label>
+                        <input type="text" name="transfer_ifsc" value="HDFC0009876">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (₹)</label>
+                        <input type="number" name="amount" value="15000">
+                    </div>
+                    <div class="form-group">
+                        <label>Transaction PIN</label>
+                        <input type="password" name="tpin" value="8492" autocomplete="off">
+                    </div>
+                </div>
+                <div style="margin-top: 0.5rem;">
+                    <button class="btn" id="transfer-btn">Transfer Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="card">
+            <h2>📜 Recent Transactions</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Ref / UPI ID</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>12 Sep 2026</td>
+                        <td>UPI - Swiggy</td>
+                        <td>swiggy@axisbank / TXN84729301</td>
+                        <td class="amount debit">- ₹456.00</td>
+                        <td><span class="tag completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>11 Sep 2026</td>
+                        <td>Salary Credit — Infosys Ltd</td>
+                        <td>NEFT/REF/2026091145678</td>
+                        <td class="amount credit">+ ₹85,000.00</td>
+                        <td><span class="tag completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>10 Sep 2026</td>
+                        <td>UPI - Amit Kumar</td>
+                        <td>amit.kumar@oksbi / TXN84729302</td>
+                        <td class="amount debit">- ₹5,000.00</td>
+                        <td><span class="tag completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>09 Sep 2026</td>
+                        <td>Amazon Shopping</td>
+                        <td>Card ending 3456 / ORD-9928374</td>
+                        <td class="amount debit">- ₹2,199.00</td>
+                        <td><span class="tag completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>08 Sep 2026</td>
+                        <td>Electricity Bill — BESCOM</td>
+                        <td>BILL/BESCOM/2026090834</td>
+                        <td class="amount debit">- ₹1,840.00</td>
+                        <td><span class="tag pending">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>07 Sep 2026</td>
+                        <td>UPI - Priya to Ravi</td>
+                        <td>ravi.singh@paytm / TXN84729305</td>
+                        <td class="amount debit">- ₹3,500.00</td>
+                        <td><span class="tag failed">Failed</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('transfer-btn').addEventListener('click', () => {
+            alert('Transfer initiated! OTP sent to +91 87654 32109 (Demo)');
+        });
+    </script>
+</body>
+</html>

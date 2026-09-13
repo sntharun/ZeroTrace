@@ -1,0 +1,120 @@
+body {
+  width: 360px;
+  margin: 0;
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.logo {
+  font-size: 24px;
+  margin-right: 8px;
+}
+
+h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.status-panel {
+  display: flex;
+  align-items: center;
+  background: #2a2a2a;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.indicator.connected { background-color: #4CAF50; }
+.indicator.disconnected { background-color: #F44336; }
+
+textarea {
+  width: 100%;
+  height: 60px;
+  box-sizing: border-box;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  resize: none;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.btn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.btn:hover { opacity: 0.8; }
+.btn.primary { background-color: #4CAF50; color: white; }
+.btn.secondary { background-color: #2196F3; color: white; }
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+input[type="checkbox"] { margin-right: 8px; }
+
+.logs {
+  background: #2a2a2a;
+  border-radius: 6px;
+  padding: 12px;
+  height: 120px;
+  overflow-y: auto;
+}
+
+.logs h3 {
+  font-size: 12px;
+  margin: 0 0 8px 0;
+  color: #aaa;
+  text-transform: uppercase;
+}
+
+#log-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+}
+
+#log-list li {
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #444;
+}
