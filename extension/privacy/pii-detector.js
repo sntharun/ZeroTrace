@@ -3,7 +3,6 @@
  */
 
 import { PII_PATTERNS, REDACTION_METHODS } from './patterns.js';
-// Vision pipeline imports would go here, mock for now to keep it lightweight in background script context
 
 /**
  * Detects PII in a given DOM skeleton and screenshot.
@@ -13,44 +12,48 @@ import { PII_PATTERNS, REDACTION_METHODS } from './patterns.js';
  */
 export async function detectPII(domSkeleton, screenshotDataUrl) {
   const detections = [];
+  const seenIds = new Set();
   
-  // Layer 1: DOM Heuristics
-  domSkeleton.sensitiveElements.forEach(el => {
+  // Layer 1: DOM Sensitive Elements (Inputs, Images, Text)
+  (domSkeleton.sensitiveElements || []).forEach(el => {
+    const rawReason = el.sensitivityReason ? el.sensitivityReason.toUpperCase() : 'SENSITIVE_FIELD';
+    const redactionMethod = REDACTION_METHODS[rawReason] || (rawReason === 'FACE' ? 'blur' : 'label_overlay');
+    
     detections.push({
-      type: el.sensitivityReason.toUpperCase() || 'SENSITIVE_FIELD',
-      value: el.text,
+      type: rawReason,
+      value: el.text || el.value || '',
       bbox: el.bbox,
-      confidence: 0.9,
+      confidence: 0.95,
       source_layer: 'dom_heuristic',
       element_id: el.element_id,
-      redaction_method: REDACTION_METHODS[el.sensitivityReason.toUpperCase()] || 'solid_black'
+      tag: el.tag,
+      redaction_method: redactionMethod
     });
+    seenIds.add(el.element_id);
   });
 
-  // Layer 2: Text Pattern Matching (RegEx on text contents of elements)
-  domSkeleton.elements.forEach(el => {
-    if (!el.text) return;
+  // Layer 2: Text Pattern Matching (RegEx on remaining elements)
+  (domSkeleton.elements || []).forEach(el => {
+    if (seenIds.has(el.element_id) || !el.text) return;
     
     for (const [piiType, regex] of Object.entries(PII_PATTERNS)) {
       if (regex.test(el.text)) {
-        // Avoid duplicates if already caught by DOM heuristics
-        if (!detections.find(d => d.element_id === el.element_id && d.type === piiType)) {
-          detections.push({
-            type: piiType,
-            value: el.text,
-            bbox: el.bbox,
-            confidence: 0.8,
-            source_layer: 'regex_pattern',
-            element_id: el.element_id,
-            redaction_method: REDACTION_METHODS[piiType] || 'solid_black'
-          });
-        }
+        detections.push({
+          type: piiType,
+          value: el.text,
+          bbox: el.bbox,
+          confidence: 0.88,
+          source_layer: 'regex_pattern',
+          element_id: el.element_id,
+          tag: el.tag,
+          redaction_method: REDACTION_METHODS[piiType] || 'label_overlay'
+        });
+        seenIds.add(el.element_id);
+        break;
       }
     }
   });
 
-  // Layer 3: Vision (Mock for this setup, would process screenshotDataUrl)
-  // e.g., faces, raw text blocks not in standard DOM nodes
-
   return detections;
 }
+

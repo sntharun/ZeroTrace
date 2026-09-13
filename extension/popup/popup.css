@@ -75,6 +75,11 @@ textarea {
 .btn:hover { opacity: 0.8; }
 .btn.primary { background-color: #4CAF50; color: white; }
 .btn.secondary { background-color: #2196F3; color: white; }
+.btn.toggle-btn {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  border: 1px solid #818cf8;
+}
 
 .toggle-container {
   display: flex;

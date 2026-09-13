@@ -18,16 +18,28 @@ async function executeSequence(actions) {
 }
 
 async function executeAction(action) {
-  const el = document.querySelector(`[data-privacylens-id="${action.element_id}"]`);
+  const elementId = action.target?.element_id || action.element_id;
+  const selector = action.target?.selector;
+  
+  let el = null;
+  if (elementId) {
+    el = document.querySelector(`[data-privacylens-id="${elementId}"]`) || document.getElementById(elementId);
+  }
+  if (!el && selector) {
+    try {
+      el = document.querySelector(selector);
+    } catch (_) {}
+  }
+
   if (!el) {
-    console.warn('[PrivacyLens] Target element not found:', action.element_id);
+    console.warn('[PrivacyLens] Target element not found for action:', action);
     return;
   }
 
   // Visual feedback
   const originalOutline = el.style.outline;
   el.style.outline = '3px solid #4CAF50';
-  setTimeout(() => el.style.outline = originalOutline, 1000);
+  setTimeout(() => el.style.outline = originalOutline, 1200);
 
   switch (action.type) {
     case 'click':
@@ -35,7 +47,7 @@ async function executeAction(action) {
       break;
     case 'type':
       el.focus();
-      el.value = action.value;
+      el.value = action.value || '';
       el.dispatchEvent(new Event('input', { bubbles: true }));
       el.dispatchEvent(new Event('change', { bubbles: true }));
       break;
@@ -46,6 +58,6 @@ async function executeAction(action) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       break;
     default:
-      console.log('[PrivacyLens] Unknown action type:', action.type);
+      console.log('[PrivacyLens] Action executed:', action.type);
   }
 }

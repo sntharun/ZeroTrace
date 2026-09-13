@@ -1,39 +1,139 @@
 /**
- * @fileoverview Patterns and definitions for PII detection.
+ * @fileoverview Comprehensive patterns and definitions for PII detection across web pages.
  */
 
 export const PII_PATTERNS = {
-  EMAIL: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/,
-  PHONE_IN: /(?:\+91|0)?[7-9]\d{9}/,
-  PHONE_US: /(?:\+1)?\s?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/,
-  AADHAAR: /\d{4}\s?\d{4}\s?\d{4}/,
-  PAN: /[A-Z]{5}[0-9]{4}[A-Z]{1}/,
-  CREDIT_CARD: /(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13})/,
-  SSN: /\d{3}-\d{2}-\d{4}/,
-  IP_ADDRESS: /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/,
+  EMAIL: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i,
+  PHONE_IN: /(?:\+91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}|\b[6-9]\d{9}\b/,
+  PHONE_US: /(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/,
+  PHONE_GENERIC: /\b\d{10}\b|(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/,
+  PINCODE_IN: /\b[1-9]\d{5}\b|\b[1-9]\d{2}\s\d{3}\b/,
+  ZIPCODE_US: /\b\d{5}(?:-\d{4})?\b/,
+  AADHAAR: /\b\d{4}[\s-]\d{4}[\s-]\d{4}\b|\b\d{12}\b/,
+  PAN: /\b[A-Z]{5}[0-9]{4}[A-Z]{1}\b/,
+  VOTER_ID: /\b[A-Z]{3}[0-9]{7}\b/,
+  PASSPORT: /\b[A-PR-WY-Z][1-9]\d\s?\d{4}[1-9]\b/,
+  DRIVING_LICENSE: /\b[A-Z]{2}[0-9]{2}\s?[0-9]{4,11}\b/,
+  CREDIT_CARD: /(?:Card:\s*)?(?:\d{4}|[•*xX\u2022\u25cf\u2219\u00b7]{4})[\s-•*xX\u2022\u25cf\u2219\u00b7]+(?:[•*xX\u2022\u25cf\u2219\u00b7]{4}[\s-•*xX\u2022\u25cf\u2219\u00b7]+)*\d{4}|\b(?:\d{4}[\s-]?){3}\d{4}\b|\b\d{15,16}\b|\bCard(?:\s+ending)?[:\s]+[\d•*xX\u2022\s-]+/i,
+  CVV: /\b\d{3,4}\b/,
+  SSN: /\b\d{3}-\d{2}-\d{4}\b/,
+  IFSC: /\b[A-Z]{4}0[A-Z0-9]{6}\b/,
+  ACCOUNT_NUMBER: /\b(?:A\/C:?|Account:?|Acc:?|A\/c:?)\s*(?:(?:\d{4}[\s-]?){2,4}\d{2,4}|[\d\s-]{9,24}|(?:\*{4}\s*){2,3}\d{4})\b|\b(?:Savings|Current)\s*-\s*(?:\d{4}[\s-]?){3,4}\d{2,4}\b|\b\d{9,18}\b/i,
+  CUSTOMER_ID: /\b(?:CID|CUST|CUSTOMER|USER|CLIENT|MEMBER|APPLICANT)[-_]?\d{4,12}\b/i,
+  UPI_ID: /\b[a-zA-Z0-9.\-_]{2,64}@[a-zA-Z0-9]{2,32}\b/i,
+  TRANSACTION_REF: /\b(?:TXN|REF|ORD|BILL|NEFT|RTGS|IMPS|UTR)[-_/A-Za-z0-9]+\b/i,
+  DATE_OF_BIRTH: /\b(?:\d{4}[-/.]\d{2}[-/.]\d{2}|\d{2}[-/.]\d{2}[-/.]\d{4})\b/,
+  IP_ADDRESS: /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/
 };
 
 export const SENSITIVE_FIELD_NAMES = [
-  'ssn', 'aadhaar', 'pan', 'phone', 'mobile', 'dob', 'birth', 'credit.card', 'cvv', 'account', 'routing'
+  'ssn', 'social_security', 'social-security',
+  'aadhaar', 'aadhar', 'uidai', 'uid',
+  'pan', 'pancard', 'pan_card',
+  'phone', 'mobile', 'tel', 'cell', 'contact', 'mob', 'phone_no', 'mobile_no',
+  'dob', 'birth', 'birthday', 'date_of_birth', 'age',
+  'credit_card', 'creditcard', 'debit_card', 'debitcard', 'card_number', 'cardnumber', 'cc-number', 'cc_num', 'card',
+  'cvv', 'cvc', 'security_code',
+  'account', 'account_number', 'acc_no', 'routing', 'ifsc', 'iban', 'swift', 'beneficiary_account',
+  'upi', 'upi_id', 'vpa', 'ref', 'txn', 'transaction_id', 'reference',
+  'password', 'pwd', 'pass', 'pin', 'secret', 'token', 'otp', 'tpin',
+  'email', 'mail', 'e-mail',
+  'name', 'full_name', 'fullname', 'fname', 'lname', 'firstname', 'lastname', 'first_name', 'last_name', 'mname',
+  'beneficiary_name', 'beneficiary', 'account_holder', 'holder_name', 'recipient', 'applicant', 'candidate',
+  'father', 'mother', 'spouse', 'guardian',
+  'customer_id', 'cust_id', 'cid', 'client_id', 'user_id', 'userid', 'member_id',
+  'address', 'addr', 'street', 'city', 'zip', 'postal', 'pincode', 'pin_code', 'location', 'residence',
+  'village', 'taluk', 'district', 'state', 'house', 'post', 'po', 'place', 'building', 'door', 'ward',
+  'panchayath', 'panchayat', 'municipality', 'corporation', 'flat', 'apt', 'lane', 'road',
+  'gender', 'sex', 'marital',
+  'tax', 'vat', 'gst', 'license', 'dl', 'passport', 'voter', 'epic',
+  'avatar', 'photo', 'profile', 'face', 'username', 'user_name',
+  'income', 'salary', 'occupation', 'designation'
 ];
 
 export const SENSITIVE_AUTOCOMPLETE_VALUES = [
-  'cc-number', 'cc-csc', 'cc-exp', 'bday', 'tel', 'email'
+  'cc-number', 'cc-csc', 'cc-exp', 'cc-type', 'cc-name',
+  'bday', 'bday-day', 'bday-month', 'bday-year',
+  'tel', 'tel-national', 'tel-country-code',
+  'email', 'name', 'given-name', 'family-name',
+  'street-address', 'address-line1', 'address-line2', 'postal-code',
+  'username', 'new-password', 'current-password', 'one-time-code'
 ];
 
 export const SENSITIVE_LABEL_KEYWORDS = [
-  'social security', 'password', 'credit card', 'cvv', 'aadhaar', 'pan card'
+  'social security', 'password', 'credit card', 'debit card', 'cvv', 'cvc',
+  'aadhaar', 'aadhar', 'pan card', 'pan number', 'date of birth', 'dob',
+  'phone number', 'mobile number', 'mobile', 'contact number', 'phone', 'email address', 'email',
+  'full name', 'first name', 'last name', 'applicant name', 'candidate name', 'father name', 'mother name',
+  'account holder', 'customer id', 'cust id', 'beneficiary name', 'beneficiary account',
+  'bank account', 'account number', 'ifsc code', 'current address', 'permanent address', 'address',
+  'village', 'taluk', 'district', 'post office', 'place', 'pincode', 'pin code', 'zip code', 'postal code',
+  'upi id', 'ref id', 'vpa', 'profile photo', 'user avatar', 'passport', 'voter id', 'driving license',
+  'transaction pin', 'tpin'
 ];
 
 export const REDACTION_METHODS = {
   PASSWORD: 'solid_black',
+  TPIN: 'solid_black',
+  PIN: 'solid_black',
+  SECRET: 'solid_black',
+  OTP: 'solid_black',
   EMAIL: 'label_overlay',
+  PHONE: 'label_overlay',
   PHONE_IN: 'label_overlay',
   PHONE_US: 'label_overlay',
+  PHONE_GENERIC: 'label_overlay',
+  MOBILE: 'label_overlay',
+  PINCODE: 'label_overlay',
+  PINCODE_IN: 'label_overlay',
+  ZIPCODE: 'label_overlay',
+  ZIPCODE_US: 'label_overlay',
+  POSTAL: 'label_overlay',
   AADHAAR: 'label_overlay',
   PAN: 'label_overlay',
+  VOTER_ID: 'label_overlay',
+  PASSPORT: 'label_overlay',
+  DRIVING_LICENSE: 'label_overlay',
   CREDIT_CARD: 'label_overlay',
+  DEBIT_CARD: 'label_overlay',
+  CARD: 'label_overlay',
+  CVV: 'solid_black',
+  CVC: 'solid_black',
   SSN: 'label_overlay',
+  IFSC: 'label_overlay',
+  ACCOUNT: 'label_overlay',
+  ACCOUNT_NUMBER: 'label_overlay',
+  CUSTOMER_ID: 'label_overlay',
+  UPI_ID: 'label_overlay',
+  REF_ID: 'label_overlay',
+  TRANSACTION_REF: 'label_overlay',
+  UPI_OR_REF_ID: 'label_overlay',
+  NAME: 'label_overlay',
+  FULL_NAME: 'label_overlay',
+  FIRST_NAME: 'label_overlay',
+  LAST_NAME: 'label_overlay',
+  APPLICANT: 'label_overlay',
+  ACCOUNT_HOLDER: 'label_overlay',
+  BENEFICIARY_NAME: 'label_overlay',
+  ADDRESS: 'label_overlay',
+  VILLAGE: 'label_overlay',
+  TALUK: 'label_overlay',
+  DISTRICT: 'label_overlay',
+  PLACE: 'label_overlay',
+  POST_OFFICE: 'label_overlay',
+  CITY: 'label_overlay',
+  STATE: 'label_overlay',
+  STREET: 'label_overlay',
+  HOUSE: 'label_overlay',
+  DOB: 'label_overlay',
+  DATE_OF_BIRTH: 'label_overlay',
+  USER_INPUT: 'label_overlay',
+  FORM_DATA: 'label_overlay',
   FACE: 'blur',
+  PROFILE_PHOTO: 'blur',
+  IMAGE: 'blur',
   GENERIC: 'semi_transparent_black'
 };
+
+
+
